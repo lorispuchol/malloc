@@ -1,27 +1,5 @@
-#include <stdarg.h>
-#include <unistd.h>
-
-// Helper function to write a single character
-static void my_putchar(char c) {
-    write(1, &c, 1);
-}
-
-// Helper function to write a string
-static void my_putstr(const char *str) {
-    if (!str) str = "(null)";
-    while (*str) {
-        my_putchar(*str++);
-    }
-}
-
-// Helper function to get string length
-static int my_strlen(const char *str) {
-    int len = 0;
-    while (str[len]) len++;
-    return len;
-}
-
-
+#include "printf.h"
+#include "utils.h"
 
 // Helper function to handle width and padding
 static void print_with_width(const char *str, int width, int left_align, char pad_char) {

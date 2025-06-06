@@ -9,6 +9,7 @@ endif
 INCLDS_DIR  =   includes/
 INCLUDES    =   malloc.h \
 				printf.h \
+				utils.h \
 
 SRCS_DIR    =   srcs/
 SRCS        =	malloc.c \
@@ -16,6 +17,7 @@ SRCS        =	malloc.c \
 				realloc.c \
 				show_alloc_mem.c \
 				utils/printf.c \
+				utils/utils.c \
 
 OBJS_DIR    =   objs/
 OBJS        :=  ${addprefix ${OBJS_DIR}, ${SRCS:.c=.o}}
