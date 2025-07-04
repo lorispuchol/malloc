@@ -8,16 +8,18 @@
 void *malloc(size_t size);
 void free(void *ptr);
 void *realloc(void *ptr, size_t size);
-void show_alloc_mem();
+void show_alloc_mem(void);
 
+# define PAGE_SIZE sysconf(_SC_PAGE_SIZE)
 
-# define TINY_BLOCK_SIZE 128
-# define SMALL_BLOCK_SIZE 1024
-# define BLOCK_HEADER_SIZE 32
-# define MAGIC 0x12345678
-# define ZONE_HEADER_SIZE sizeof(t_zone)
-# define TINY_ZONE_ALLOCATIONS 100
-# define SMALL_ZONE_ALLOCATIONS 100
+# define TINY_ALLOC_MAX_SIZE 128 // n bytes (cf subject)
+# define SMALL_ALLOC_MAX_SIZE 1024 // m bytes (cf subject)
+
+# define TINY_ZONE_MIN_CAPACITY 100 // Minimum number of TINY_ALLOC_MAX_SIZE allocations in a tiny zone
+# define SMALL_ZONE_MIN_CAPACITY 100 // Minimum number of SMALL_ALLOC_MAX_SIZE allocations in a small zone
+# define LARGE_ZONE_MIN_CAPACITY 1 // Number of allocations in a large zone
+
+# define ALIGNMENT 16 // Memory alignment in bytes
 
 typedef enum e_zone_type {
     TINY,

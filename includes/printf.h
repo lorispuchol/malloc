@@ -3,6 +3,6 @@
 
 # include <stdarg.h>
 
-int my_printf(const char *format, ...);
+int ft_printf(const char *format, ...);
 
 #endif // PRINTF_H

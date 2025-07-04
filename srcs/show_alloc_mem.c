@@ -42,8 +42,8 @@ void show_alloc_mem() {
     for (t_zone *zone = g_zones; zone; zone = zone->next) {
         if (zone->type == TINY || zone->type == SMALL) {
             size_t block_size = (zone->type == TINY) ? 
-                (BLOCK_HEADER_SIZE + TINY_BLOCK_SIZE) : 
-                (BLOCK_HEADER_SIZE + SMALL_BLOCK_SIZE);
+                (BLOCK_HEADER_SIZE + TINY_ALLOC_MAX_SIZE) : 
+                (BLOCK_HEADER_SIZE + SMALL_ALLOC_MAX_SIZE);
             t_block *block = (t_block *)((char *)zone + ZONE_HEADER_SIZE);
             for (int i = 0; i < (zone->type == TINY ? TINY_ZONE_ALLOCATIONS : SMALL_ZONE_ALLOCATIONS); ++i) {
                 if (!block->is_free && count < 100000) {
@@ -74,7 +74,7 @@ void show_alloc_mem() {
         if (last_zone_start != (void *)zone) {
             last_zone_start = zone;
             const char *type_str = (blocks[i].type == TINY) ? "TINY" : (blocks[i].type == SMALL) ? "SMALL" : "LARGE";
-            write(1, type_str, my_strlen(type_str));
+            write(1, type_str, ft_strlen(type_str));
             write(1, " : ", 3);
             print_hex_address(last_zone_start);
             write(1, "\n", 1);

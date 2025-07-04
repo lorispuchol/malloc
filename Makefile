@@ -15,6 +15,8 @@ SRCS_DIR    =   srcs/
 SRCS        =	malloc.c \
 				free.c \
 				realloc.c \
+				calloc.c \
+				reallocarray.c \
 				show_alloc_mem.c \
 				utils/printf.c \
 				utils/utils.c \
@@ -50,7 +52,7 @@ ${NAME}:    ${OBJS}
 			ln -s $(NAME) $(SYMLINK)
 
 clean:
-			${RM} ${OBJS_DIR}
+			${RM} ${OBJS_DIR} a.out
 
 fclean:     clean
 			${RM} ${NAME}  ${SYMLINK}

@@ -3,25 +3,25 @@
 
 // Helper function to handle width and padding
 static void print_with_width(const char *str, int width, int left_align, char pad_char) {
-    int len = my_strlen(str);
+    int len = ft_strlen(str);
     int padding = width - len;
     
     if (padding <= 0) {
-        my_putstr(str);
+        ft_putstr(str);
         return;
     }
     
     if (!left_align) {
         // Right align - print padding first
         while (padding-- > 0) {
-            my_putchar(pad_char);
+            ft_putchar(pad_char);
         }
-        my_putstr(str);
+        ft_putstr(str);
     } else {
         // Left align - print string first
-        my_putstr(str);
+        ft_putstr(str);
         while (padding-- > 0) {
-            my_putchar(' ');
+            ft_putchar(' ');
         }
     }
 }
@@ -118,7 +118,7 @@ static char* unbr_to_str(unsigned long long n, int base, int uppercase, int alte
 }
 
 // Main printf function
-int my_printf(const char *format, ...) {
+int ft_printf(const char *format, ...) {
     va_list args;
     va_start(args, format);
     
@@ -126,7 +126,7 @@ int my_printf(const char *format, ...) {
     
     while (*format) {
         if (*format != '%') {
-            my_putchar(*format);
+            ft_putchar(*format);
             count++;
             format++;
             continue;
@@ -200,14 +200,14 @@ int my_printf(const char *format, ...) {
                 char c = (char)va_arg(args, int);
                 if (width > 1) {
                     if (left_align) {
-                        my_putchar(c);
-                        for (int i = 1; i < width; i++) my_putchar(' ');
+                        ft_putchar(c);
+                        for (int i = 1; i < width; i++) ft_putchar(' ');
                     } else {
-                        for (int i = 1; i < width; i++) my_putchar(' ');
-                        my_putchar(c);
+                        for (int i = 1; i < width; i++) ft_putchar(' ');
+                        ft_putchar(c);
                     }
                 } else {
-                    my_putchar(c);
+                    ft_putchar(c);
                 }
                 count += width > 1 ? width : 1;
                 break;
@@ -216,7 +216,7 @@ int my_printf(const char *format, ...) {
                 char *str = va_arg(args, char*);
                 if (!str) str = "(null)";
                 
-                int len = my_strlen(str);
+                int len = ft_strlen(str);
                 if (precision >= 0 && precision < len) {
                     // Print only precision characters
                     char temp_str[precision + 1];
@@ -242,7 +242,7 @@ int my_printf(const char *format, ...) {
                 char *str = nbr_to_str(n, 10, 0, show_sign, space_prefix);
                 char pad_char = (pad_zero && !left_align) ? '0' : ' ';
                 print_with_width(str, width, left_align, pad_char);
-                int len = my_strlen(str);
+                int len = ft_strlen(str);
                 count += width > len ? width : len;
                 break;
             }
@@ -255,7 +255,7 @@ int my_printf(const char *format, ...) {
                 char *str = unbr_to_str(n, 10, 0, alternate_form);
                 char pad_char = (pad_zero && !left_align) ? '0' : ' ';
                 print_with_width(str, width, left_align, pad_char);
-                int len = my_strlen(str);
+                int len = ft_strlen(str);
                 count += width > len ? width : len;
                 break;
             }
@@ -268,7 +268,7 @@ int my_printf(const char *format, ...) {
                 char *str = unbr_to_str(n, 8, 0, alternate_form);
                 char pad_char = (pad_zero && !left_align) ? '0' : ' ';
                 print_with_width(str, width, left_align, pad_char);
-                int len = my_strlen(str);
+                int len = ft_strlen(str);
                 count += width > len ? width : len;
                 break;
             }
@@ -281,7 +281,7 @@ int my_printf(const char *format, ...) {
                 char *str = unbr_to_str(n, 16, 0, alternate_form);
                 char pad_char = (pad_zero && !left_align) ? '0' : ' ';
                 print_with_width(str, width, left_align, pad_char);
-                int len = my_strlen(str);
+                int len = ft_strlen(str);
                 count += width > len ? width : len;
                 break;
             }
@@ -294,7 +294,7 @@ int my_printf(const char *format, ...) {
                 char *str = unbr_to_str(n, 16, 1, alternate_form);
                 char pad_char = (pad_zero && !left_align) ? '0' : ' ';
                 print_with_width(str, width, left_align, pad_char);
-                int len = my_strlen(str);
+                int len = ft_strlen(str);
                 count += width > len ? width : len;
                 break;
             }
@@ -304,22 +304,22 @@ int my_printf(const char *format, ...) {
                     print_with_width("(nil)", width, left_align, ' ');
                     count += width > 5 ? width : 5;
                 } else {
-                    my_putstr("0x");
+                    ft_putstr("0x");
                     char *str = unbr_to_str((unsigned long long)(unsigned long)ptr, 16, 0, 0);
-                    my_putstr(str);
-                    count += 2 + my_strlen(str);
+                    ft_putstr(str);
+                    count += 2 + ft_strlen(str);
                 }
                 break;
             }
             case '%': {
-                my_putchar('%');
+                ft_putchar('%');
                 count++;
                 break;
             }
             default: {
                 // Unknown format specifier, just print it
-                my_putchar('%');
-                my_putchar(*format);
+                ft_putchar('%');
+                ft_putchar(*format);
                 count += 2;
                 break;
             }
