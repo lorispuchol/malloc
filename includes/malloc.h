@@ -4,6 +4,7 @@
 # include <stddef.h> // size_t
 # include <unistd.h> // write - getpagesize
 # include <sys/mman.h> // mmap
+# include <stdbool.h> // bool
 
 void *malloc(size_t size);
 void free(void *ptr);
@@ -12,36 +13,71 @@ void show_alloc_mem(void);
 
 # define PAGE_SIZE sysconf(_SC_PAGE_SIZE)
 
-# define TINY_ALLOC_MAX_SIZE 128 // n bytes (cf subject)
-# define SMALL_ALLOC_MAX_SIZE 1024 // m bytes (cf subject)
+# define TINY_BLOCK_MAX_SIZE 128 // Maximum size of a tiny block (subject: n bytes)
+# define SMALL_BLOCK_MAX_SIZE 1024 // Maximum size of a small block (subject: m bytes)
 
-# define TINY_ZONE_MIN_CAPACITY 100 // Minimum number of TINY_ALLOC_MAX_SIZE allocations in a tiny zone
-# define SMALL_ZONE_MIN_CAPACITY 100 // Minimum number of SMALL_ALLOC_MAX_SIZE allocations in a small zone
-# define LARGE_ZONE_MIN_CAPACITY 1 // Number of allocations in a large zone
+# define TINY_ZONE_MIN_CAPACITY 100 // Minimum number of block of TINY_BLOCK_MAX_SIZE size in the tiny zone
+# define SMALL_ZONE_MIN_CAPACITY 100 // Minimum number of block of SMALL_BLOCK_MAX_SIZE size in the small zone
+# define LARGE_ZONE_MIN_CAPACITY 1 // Minimum number of blocks in a large zone
 
 # define ALIGNMENT 16 // Memory alignment in bytes
 
-typedef enum e_zone_type {
+typedef enum e_zone_type t_zone_type;
+typedef struct s_memory_zones t_memory_zones;
+typedef struct s_page_header t_page_header;
+typedef struct s_block_header t_block_header;
+
+enum e_zone_type {
     TINY,
     SMALL,
     LARGE
-} t_zone_type;
+};
 
-typedef struct s_zone {
+struct s_memory_zones {
+    t_page_header *tiny;
+    t_page_header *small;
+    t_page_header *large;
+    /*
+    size_t total_allocated;
+    size_t total_free;
+    size_t total_used;
+    size_t total_zones;
+    size_t total_blocks;
+    size_t total_free_blocks;
+    size_t total_used_blocks;
+    size_t total_tiny_zones;
+    size_t total_small_zones;
+    size_t total_large_zones;
+    size_t total_tiny_blocks;
+    size_t total_small_blocks;
+    size_t total_large_blocks;
+    size_t total_tiny_free_blocks;
+    size_t total_small_free_blocks;
+    size_t total_large_free_blocks;
+    size_t total_tiny_used_blocks;
+    size_t total_small_used_blocks;
+    size_t total_large_used_blocks;
+    */
+};
+
+// This structure represents the header of the allocated memory pages given by one call of mmap.
+struct s_page_header {
     t_zone_type type;
-    size_t total_size;
-    struct s_zone *next;
-    struct s_block *free_list;
-    int magic;
-} t_zone;
-
-typedef struct s_block {
+    t_block_header *alloc_list;
+    t_block_header *free_list;
+    size_t max_free_chunk_size;
     size_t size;
-    int is_free;
-    struct s_block *next_free;
-} t_block;
+    t_page_header *next;
+    t_page_header *previous;
+};
 
-extern t_zone *g_zones;
-
+struct s_block_header {
+    size_t size;
+    bool is_free;
+    t_block_header *next;
+    t_block_header *prev;
+};
+    
+extern t_memory_zones *g_memory_zones;
 
 #endif // MALLOC_H
