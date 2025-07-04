@@ -15,8 +15,6 @@ SRCS_DIR    =   srcs/
 SRCS        =	malloc.c \
 				free.c \
 				realloc.c \
-				calloc.c \
-				reallocarray.c \
 				show_alloc_mem.c \
 				utils/printf.c \
 				utils/utils.c \

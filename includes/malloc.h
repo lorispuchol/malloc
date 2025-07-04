@@ -16,9 +16,9 @@ void show_alloc_mem(void);
 # define TINY_BLOCK_MAX_SIZE 128 // Maximum size of a tiny block (subject: n bytes)
 # define SMALL_BLOCK_MAX_SIZE 1024 // Maximum size of a small block (subject: m bytes)
 
-# define TINY_ZONE_MIN_CAPACITY 100 // Minimum number of block of TINY_BLOCK_MAX_SIZE size in the tiny zone
-# define SMALL_ZONE_MIN_CAPACITY 100 // Minimum number of block of SMALL_BLOCK_MAX_SIZE size in the small zone
+# define MIN_CAPACITY 100 // Minimum number of block of MAX_SIZE size that tiny and small zone must contain with one call of mmap
 # define LARGE_ZONE_MIN_CAPACITY 1 // Minimum number of blocks in a large zone
+
 
 # define ALIGNMENT 16 // Memory alignment in bytes
 
@@ -60,15 +60,13 @@ struct s_memory_zones {
     */
 };
 
-// This structure represents the header of the allocated memory pages given by one call of mmap.
+// This structure represents the header of one or more successive pages allocated by one call of mmap.
 struct s_page_header {
     t_zone_type type;
-    t_block_header *alloc_list;
-    t_block_header *free_list;
-    size_t max_free_chunk_size;
+    t_block_header *block_list;
     size_t size;
     t_page_header *next;
-    t_page_header *previous;
+    t_page_header *prev;
 };
 
 struct s_block_header {
