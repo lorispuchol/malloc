@@ -2,20 +2,20 @@
 
 ## Usage
 
-To ensure that the program call our malloc and not the libc malloc, we need to preload our lib to the program execution.
+To ensure that a program call our malloc and not the libc malloc, we need to preload our lib to the program execution.
 
 bash
 ```
 make
-LD_PRELOAD=./libft_malloc.so <program>  
+LD_PRELOAD=./libft_malloc.so <any program>  
 ```
-`program` can be `ls` for example
+`any program` can be `ls` or `gcc` for example
 
 
 ## Test printing memory map
 
-We need a program which calls `show_alloc_mem()`, `show_alloc_mem()` is included in the library.  
-So we need to link the library to your program like this
+We need a program which calls `show_alloc_mem()`, `show_alloc_mem()` is included in our library.  
+So we need to link the library to a testing program like this
 
 ```bash
 make
@@ -28,7 +28,7 @@ LD_LIBRARY_PATH=. ./a.out
 1024 = Maximum size of a small block (subject: `m` bytes)
 
 We need to manage 3 zones of memory allocation:
-- Tiny zone: for allocations of size <= 128 bytes
+- Tiny zone: for allocations of size > 0 and <= 128 bytes
 - Small zone: for allocations of size > 128 bytes and <= 1024 bytes
 - Large zone: for allocations of size > 1024 bytes  
 

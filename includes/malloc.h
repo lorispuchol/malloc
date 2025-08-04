@@ -1,6 +1,7 @@
 #ifndef MALLOC_H
 # define MALLOC_H
 
+# define _GNU_SOURCE
 # include <stddef.h> // size_t
 # include <unistd.h> // write - getpagesize
 # include <sys/mman.h> // mmap
@@ -10,6 +11,10 @@ void *malloc(size_t size);
 void free(void *ptr);
 void *realloc(void *ptr, size_t size);
 void show_alloc_mem(void);
+
+// Utility functions
+size_t align_block_size(size_t size);
+size_t align_page_size(size_t size);
 
 # define PAGE_SIZE sysconf(_SC_PAGE_SIZE)
 
