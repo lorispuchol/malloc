@@ -30,7 +30,7 @@ static t_block_header *find_block_for_ptr(t_page_header *page, void *ptr) {
 
 // Helper function to coalesce adjacent free blocks
 static void coalesce_free_blocks(t_block_header *block) {
-    // Coalesce with next block if it's free
+    // Coalesce with next blocks if they're free
     while (block->next && block->next->is_free) {
         t_block_header *next_block = block->next;
         block->size += sizeof(t_block_header) + next_block->size;
@@ -40,14 +40,16 @@ static void coalesce_free_blocks(t_block_header *block) {
         }
     }
     
-    // Coalesce with previous block if it's free
-    if (block->prev && block->prev->is_free) {
+    // Coalesce with previous blocks if they're free (symmetric defensive approach)
+    while (block->prev && block->prev->is_free) {
         t_block_header *prev_block = block->prev;
         prev_block->size += sizeof(t_block_header) + block->size;
         prev_block->next = block->next;
         if (block->next) {
             block->next->prev = prev_block;
         }
+        // Update reference point for next iteration
+        block = prev_block;
     }
 }
 

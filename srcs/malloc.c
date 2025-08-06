@@ -143,15 +143,11 @@ static void *allocate_large_block(size_t size) {
     return (char *)block + sizeof(t_block_header);
 }
 
-
-// TODO: Handle size < 0
 void *malloc(size_t size) {
     if (size == 0) {
         return NULL;
     }
-    
     size = align_block_size(size);
-    
     if (size <= TINY_BLOCK_MAX_SIZE) {
         return allocate_tiny_block(size);
     }

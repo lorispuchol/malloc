@@ -1,6 +1,13 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <limits.h>
+#include <unistd.h>
+
 int main() {
-    void *size = malloc(1);
-    printf("Allocated address: %p\n", size);
-    free(size);
-    free(size);
+    void *ptr = malloc(SIZE_MAX - 20000);  
+    printf("Allocated address: %p\n", ptr);
+    free(ptr);
+    // free(size);
+    SIZE_MAX;
 }
