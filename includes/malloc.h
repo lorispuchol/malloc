@@ -6,8 +6,10 @@
 # include <unistd.h> // write - getpagesize
 # include <sys/mman.h> // mmap
 # include <stdbool.h> // bool
+# include <stdint.h> // SIZE_MAX
 
 void *malloc(size_t size);
+void *calloc(size_t count, size_t size);
 void free(void *ptr);
 void *realloc(void *ptr, size_t size);
 void show_alloc_mem(void);

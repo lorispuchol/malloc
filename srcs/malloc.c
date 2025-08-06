@@ -1,18 +1,10 @@
 #include "malloc.h"
 #include "printf.h"
 
-t_memory_zones *g_memory_zones = NULL;
+static t_memory_zones g_memory_zones_struct = {NULL, NULL, NULL};
+t_memory_zones *g_memory_zones = &g_memory_zones_struct;
 
 static t_memory_zones *init_memory_zones() {
-    if (!g_memory_zones) {
-        g_memory_zones = mmap(NULL, sizeof(t_memory_zones), PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
-        if (g_memory_zones == MAP_FAILED) {
-            return NULL;
-        }
-        g_memory_zones->tiny = NULL;
-        g_memory_zones->small = NULL;
-        g_memory_zones->large = NULL;
-    }
     return g_memory_zones;
 }
 
@@ -124,6 +116,8 @@ static void *allocate_large_block(size_t size) {
         return NULL;
     }
     
+    // For large allocations, each block gets its own mmap call
+    // This ensures complete isolation between large allocations
     size_t total_size = align_page_size(sizeof(t_page_header) + sizeof(t_block_header) + size);
     t_page_header *new_page = mmap(NULL, total_size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
     if (new_page == MAP_FAILED) {

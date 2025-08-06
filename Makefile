@@ -13,6 +13,7 @@ INCLUDES    =   malloc.h \
 
 SRCS_DIR    =   srcs/
 SRCS        =	malloc.c \
+				calloc.c \
 				free.c \
 				realloc.c \
 				show_alloc_mem.c \
