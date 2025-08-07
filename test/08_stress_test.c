@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <assert.h>
 #include "../includes/malloc.h"
+#include "../includes/printf.h"
 
 #define MAX_ALLOCATIONS 1000
 #define MAX_SIZE 4096
@@ -16,7 +17,7 @@ typedef struct allocation {
 } allocation_t;
 
 void test_stress_malloc() {
-    printf("=== COMPLEX STRESS TEST ===\n");
+    ft_printf("=== COMPLEX STRESS TEST ===\n");
     
     allocation_t allocations[MAX_ALLOCATIONS];
     srand((unsigned int)time(NULL));
@@ -28,14 +29,14 @@ void test_stress_malloc() {
         allocations[i].active = 0;
     }
     
-    printf("1. Random allocation/deallocation stress test:\n");
+    ft_printf("1. Random allocation/deallocation stress test:\n");
     show_alloc_mem();
     
     for (int iter = 0; iter < NUM_ITERATIONS; iter++) {
-        printf("\n   Iteration %d/%d:\n", iter + 1, NUM_ITERATIONS);
+        ft_printf("\n   Iteration %d/%d:\n", iter + 1, NUM_ITERATIONS);
         
         // Allocation phase
-        printf("   - Allocating phase...\n");
+        ft_printf("   - Allocating phase...\n");
         for (int i = 0; i < MAX_ALLOCATIONS / 2; i++) {
             if (!allocations[i].active) {
                 size_t size = (rand() % MAX_SIZE) + 1;
@@ -51,7 +52,7 @@ void test_stress_malloc() {
         }
         
         // Mixed allocation/deallocation phase
-        printf("   - Mixed operations phase...\n");
+        ft_printf("   - Mixed operations phase...\n");
         for (int i = 0; i < MAX_ALLOCATIONS; i++) {
             if (rand() % 2 == 0) { // 50% chance to free
                 if (allocations[i].active) {
@@ -87,14 +88,14 @@ void test_stress_malloc() {
                 total_allocated += allocations[i].size;
             }
         }
-        printf("   - Active allocations: %d, Total size: %zu bytes\n", 
+        ft_printf("   - Active allocations: %d, Total size: %zu bytes\n", 
                active_count, total_allocated);
     }
     
-    printf("\n2. Memory state after stress test:\n");
+    ft_printf("\n2. Memory state after stress test:\n");
     show_alloc_mem();
     
-    printf("\n3. Testing memory integrity after stress test:\n");
+    ft_printf("\n3. Testing memory integrity after stress test:\n");
     int integrity_failures = 0;
     for (int i = 0; i < MAX_ALLOCATIONS; i++) {
         if (allocations[i].active) {
@@ -107,11 +108,11 @@ void test_stress_malloc() {
             }
         }
     }
-    printf("   Memory integrity failures: %d\n", integrity_failures);
+    ft_printf("   Memory integrity failures: %d\n", integrity_failures);
     assert(integrity_failures == 0);
-    printf("   ✓ All memory integrity checks passed\n");
+    ft_printf("   ✓ All memory integrity checks passed\n");
     
-    printf("\n4. Testing realloc stress:\n");
+    ft_printf("\n4. Testing realloc stress:\n");
     for (int i = 0; i < 50; i++) {
         if (allocations[i].active) {
             size_t old_size = allocations[i].size;
@@ -121,7 +122,8 @@ void test_stress_malloc() {
             allocations[i].ptr = realloc(allocations[i].ptr, new_size);
             
             if (allocations[i].ptr) {
-                // Verify old data is preserved (up to min size)
+                // Use old_ptr to avoid unused variable warning
+                (void)old_ptr; // Suppress unused variable warning
                 size_t check_size = (old_size < new_size) ? old_size : new_size;
                 char *data = (char *)allocations[i].ptr;
                 for (size_t j = 0; j < check_size; j++) {
@@ -137,9 +139,9 @@ void test_stress_malloc() {
             }
         }
     }
-    printf("   ✓ Realloc stress test completed\n");
+    ft_printf("   ✓ Realloc stress test completed\n");
     
-    printf("\n5. Testing extreme fragmentation:\n");
+    ft_printf("\n5. Testing extreme fragmentation:\n");
     // Allocate many small blocks
     void *small_blocks[1000];
     for (int i = 0; i < 1000; i++) {
@@ -148,14 +150,14 @@ void test_stress_malloc() {
             *((int *)small_blocks[i]) = i;
         }
     }
-    printf("   ✓ Allocated 1000 small blocks\n");
+    ft_printf("   ✓ Allocated 1000 small blocks\n");
     
     // Free every other block to create fragmentation
     for (int i = 1; i < 1000; i += 2) {
         free(small_blocks[i]);
         small_blocks[i] = NULL;
     }
-    printf("   ✓ Created fragmentation pattern\n");
+    ft_printf("   ✓ Created fragmentation pattern\n");
     
     // Try to allocate larger blocks
     void *medium_blocks[10];
@@ -165,7 +167,7 @@ void test_stress_malloc() {
             memset(medium_blocks[i], 0xAA, 64);
         }
     }
-    printf("   ✓ Allocated medium blocks despite fragmentation\n");
+    ft_printf("   ✓ Allocated medium blocks despite fragmentation\n");
     
     // Cleanup fragmentation test
     for (int i = 0; i < 1000; i += 2) {
@@ -179,10 +181,10 @@ void test_stress_malloc() {
             free(medium_blocks[i]);
         }
     }
-    printf("   ✓ Fragmentation cleanup completed\n");
+    ft_printf("   ✓ Fragmentation cleanup completed\n");
     
     // Final cleanup
-    printf("\n6. Final cleanup:\n");
+    ft_printf("\n6. Final cleanup:\n");
     for (int i = 0; i < MAX_ALLOCATIONS; i++) {
         if (allocations[i].active) {
             free(allocations[i].ptr);
@@ -190,10 +192,10 @@ void test_stress_malloc() {
         }
     }
     
-    printf("   Final memory state:\n");
+    ft_printf("   Final memory state:\n");
     show_alloc_mem();
     
-    printf("\n=== COMPLEX STRESS TEST PASSED ===\n\n");
+    ft_printf("\n=== COMPLEX STRESS TEST PASSED ===\n\n");
 }
 
 int main() {
