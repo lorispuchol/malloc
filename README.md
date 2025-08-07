@@ -17,10 +17,19 @@ LD_PRELOAD=./libft_malloc.so <any program>
 We need a program which calls `show_alloc_mem()`, `show_alloc_mem()` is included in our library.  
 So we need to link the library to a testing program like this
 
+static link
 ```bash
 make
 gcc test/main.c -L . -l ft_malloc
 LD_LIBRARY_PATH=. ./a.out
+```
+
+or dynamic link
+
+```bash
+make
+gcc -I ./includes/ ./test/main-test0.c ./libft_malloc.so
+./a.out
 ```
 
 ## Notes
