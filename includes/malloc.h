@@ -50,6 +50,7 @@ struct s_memory_zones {
 // This structure represents the header of one or more successive pages allocated by one call of mmap.
 struct s_page_header {
     t_zone_type type;
+    char padding[12];       // Padding to reach 48 bytes (16-byte aligned)
     t_block_header *block_list;
     size_t size;
     t_page_header *next;

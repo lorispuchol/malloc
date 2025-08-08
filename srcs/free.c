@@ -103,6 +103,7 @@ void free(void *ptr) {
             }
             block->is_free = true;
             coalesce_free_blocks(block);
+            // if(g_memory_zones->small->next)
             cleanup_empty_page(&g_memory_zones->tiny, page);
             return;
         } else {
@@ -123,6 +124,7 @@ void free(void *ptr) {
             }
             block->is_free = true;
             coalesce_free_blocks(block);
+            // if (g_memory_zones->small->next)
             cleanup_empty_page(&g_memory_zones->small, page);
             return;
         } else {
