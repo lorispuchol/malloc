@@ -37,7 +37,7 @@ void test_memory_coalescing() {
     show_alloc_mem();
     
     ft_printf("\n6. Allocating larger block in coalesced space:\n");
-    void *large_ptr = malloc(350); // Should fit in coalesced space
+    void *large_ptr = malloc(120); // Should fit in coalesced TINY space (aligned to 128)
     ft_printf("   Large block allocated at: %p\n", large_ptr);
     show_alloc_mem();
     

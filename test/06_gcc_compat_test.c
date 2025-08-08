@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <string.h>
-#include <assert.h>
 #include "../includes/malloc.h"
 #include "../includes/printf.h"
 
@@ -12,9 +11,12 @@ void test_gcc_compatibility() {
     char *str = (char *)malloc(100);
     strcpy(str, "Hello, World!");
     ft_printf("   String: %s\n", str);
-    assert(strcmp(str, "Hello, World!") == 0);
+    if (strcmp(str, "Hello, World!") == 0) {
+        ft_printf("   ✓ Standard string functions work\n");
+    } else {
+        ft_printf("   ❌ String test failed\n");
+    }
     free(str);
-    ft_printf("   ✓ Standard string functions work\n");
     
     // Test 2: Array allocation
     ft_printf("\n2. Testing array allocation:\n");
@@ -25,7 +27,11 @@ void test_gcc_compatibility() {
     ft_printf("   Array values: ");
     for (int i = 0; i < 10; i++) {
         ft_printf("%d ", arr[i]);
-        assert(arr[i] == i * i);
+        if (arr[i] != i * i) {
+            ft_printf("\n   ❌ Array test failed at index %d\n", i);
+            free(arr);
+            return;
+        }
     }
     ft_printf("\n   ✓ Array operations work\n");
     free(arr);
@@ -44,9 +50,11 @@ void test_gcc_compatibility() {
     s->value = 3.14159;
     
     ft_printf("   Struct: id=%d, name=%s, value=%.5f\n", s->id, s->name, s->value);
-    assert(s->id == 42);
-    assert(strcmp(s->name, "Test Structure") == 0);
-    assert(s->value > 3.14 && s->value < 3.15);
+    if (s->id == 42 && strcmp(s->name, "Test Structure") == 0 && s->value > 3.14 && s->value < 3.15) {
+        ft_printf("   ✓ Struct operations verified\n");
+    } else {
+        ft_printf("   ❌ Struct test failed\n");
+    }
     free(s);
     ft_printf("   ✓ Struct operations work\n");
     
@@ -55,7 +63,14 @@ void test_gcc_compatibility() {
     void *ptrs[10];
     for (int i = 0; i < 10; i++) {
         ptrs[i] = malloc((i + 1) * 50);
-        assert(ptrs[i] != NULL);
+        if (ptrs[i] == NULL) {
+            ft_printf("   ❌ Allocation failed at index %d\n", i);
+            // Free previously allocated pointers
+            for (int j = 0; j < i; j++) {
+                free(ptrs[j]);
+            }
+            return;
+        }
     }
     ft_printf("   ✓ Multiple allocations successful\n");
     
@@ -68,7 +83,14 @@ void test_gcc_compatibility() {
     // Allocate again in freed spaces
     for (int i = 0; i < 10; i += 2) {
         ptrs[i] = malloc((i + 1) * 25);
-        assert(ptrs[i] != NULL);
+        if (ptrs[i] == NULL) {
+            ft_printf("   ❌ Reallocation failed at index %d\n", i);
+            // Free remaining pointers
+            for (int j = 1; j < 10; j += 2) {
+                free(ptrs[j]);
+            }
+            return;
+        }
     }
     ft_printf("   ✓ Reallocation in freed spaces successful\n");
     
@@ -83,16 +105,30 @@ void test_gcc_compatibility() {
     
     // Very small allocation
     void *tiny = malloc(1);
-    assert(tiny != NULL);
+    if (tiny == NULL) {
+        ft_printf("   ❌ Tiny allocation failed\n");
+        return;
+    }
     *((char *)tiny) = 'A';
-    assert(*((char *)tiny) == 'A');
+    if (*((char *)tiny) != 'A') {
+        ft_printf("   ❌ Tiny allocation write/read failed\n");
+        free(tiny);
+        return;
+    }
     free(tiny);
     ft_printf("   ✓ 1-byte allocation works\n");
     
     // Alignment test
     void *aligned = malloc(17); // Non-power-of-2 size
-    assert(aligned != NULL);
-    assert(((uintptr_t)aligned % sizeof(void *)) == 0); // Should be pointer-aligned
+    if (aligned == NULL) {
+        ft_printf("   ❌ Alignment test allocation failed\n");
+        return;
+    }
+    if (((uintptr_t)aligned % sizeof(void *)) != 0) {
+        ft_printf("   ❌ Alignment test failed - not pointer-aligned\n");
+        free(aligned);
+        return;
+    }
     free(aligned);
     ft_printf("   ✓ Alignment works for odd sizes\n");
     

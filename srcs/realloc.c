@@ -1,5 +1,7 @@
 #include "malloc.h"
 #include "utils.h"
+#include "printf.h"
+#include <stdlib.h>
 
 // Helper function to find which page contains a given pointer
 static t_page_header *find_page_containing_ptr(t_page_header *zone_head, void *ptr) {
@@ -68,7 +70,7 @@ static size_t get_block_size(void *ptr) {
 }
 
 void *realloc(void *ptr, size_t size) {
-    write(1, "=== REALLOC FUNCTION ===\n", 25);
+    // write(1, "=== REALLOC FUNCTION ===\n", 25);
     // If ptr is NULL, behave like malloc
     if (!ptr) {
         return malloc(size);
@@ -83,8 +85,9 @@ void *realloc(void *ptr, size_t size) {
     // Get the current size of the block
     size_t old_size = get_block_size(ptr);
     if (old_size == 0) {
-        // Invalid pointer
-        return NULL;
+        // Invalid pointer - abort like real realloc()
+        ft_printf("*** Error: realloc(): invalid pointer %p ***\n", ptr);
+        abort();
     }
     
     // Align the new size
