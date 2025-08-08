@@ -13,6 +13,7 @@ void *calloc(size_t count, size_t size);
 void free(void *ptr);
 void *realloc(void *ptr, size_t size);
 void show_alloc_mem(void);
+void show_alloc_mem_ex(void);
 
 // Utility functions
 size_t align_block_size(size_t size);
@@ -44,27 +45,6 @@ struct s_memory_zones {
     t_page_header *tiny;
     t_page_header *small;
     t_page_header *large;
-    /*
-    size_t total_allocated;
-    size_t total_free;
-    size_t total_used;
-    size_t total_zones;
-    size_t total_blocks;
-    size_t total_free_blocks;
-    size_t total_used_blocks;
-    size_t total_tiny_zones;
-    size_t total_small_zones;
-    size_t total_large_zones;
-    size_t total_tiny_blocks;
-    size_t total_small_blocks;
-    size_t total_large_blocks;
-    size_t total_tiny_free_blocks;
-    size_t total_small_free_blocks;
-    size_t total_large_free_blocks;
-    size_t total_tiny_used_blocks;
-    size_t total_small_used_blocks;
-    size_t total_large_used_blocks;
-    */
 };
 
 // This structure represents the header of one or more successive pages allocated by one call of mmap.

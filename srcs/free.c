@@ -1,5 +1,7 @@
 #include "malloc.h"
 #include "utils.h"
+#include "printf.h"
+#include <stdlib.h>
 
 // Helper function to find which page contains a given pointer
 static t_page_header *find_page_containing_ptr(t_page_header *zone_head, void *ptr) {
@@ -81,8 +83,9 @@ static void cleanup_empty_page(t_page_header **zone_head, t_page_header *page) {
 }
 
 void free(void *ptr) {
+    // write(1, "=== FREE FUNCTION ===\n", 23); 
     if (!ptr || !g_memory_zones) {
-        return;
+        return;  // Standard behavior: free(NULL) is safe
     }
     
     t_page_header *page = NULL;
@@ -92,29 +95,52 @@ void free(void *ptr) {
     page = find_page_containing_ptr(g_memory_zones->tiny, ptr);
     if (page) {
         block = find_block_for_ptr(page, ptr);
-        if (block && !block->is_free) {
+        if (block) {
+            if (block->is_free) {
+                // Double free detected - abort like real free()
+                ft_printf("*** Error: double free or corruption (tiny): %p ***\n", ptr);
+                abort();
+            }
             block->is_free = true;
             coalesce_free_blocks(block);
             cleanup_empty_page(&g_memory_zones->tiny, page);
             return;
+        } else {
+            // Pointer is within page range but not a valid block start
+            ft_printf("*** Error: free(): invalid pointer %p (corrupted tiny zone) ***\n", ptr);
+            abort();
         }
     }
     
     page = find_page_containing_ptr(g_memory_zones->small, ptr);
     if (page) {
         block = find_block_for_ptr(page, ptr);
-        if (block && !block->is_free) {
+        if (block) {
+            if (block->is_free) {
+                // Double free detected - abort like real free()
+                ft_printf("*** Error: double free or corruption (small): %p ***\n", ptr);
+                abort();
+            }
             block->is_free = true;
             coalesce_free_blocks(block);
             cleanup_empty_page(&g_memory_zones->small, page);
             return;
+        } else {
+            // Pointer is within page range but not a valid block start
+            ft_printf("*** Error: free(): invalid pointer %p (corrupted small zone) ***\n", ptr);
+            abort();
         }
     }
     
     page = find_page_containing_ptr(g_memory_zones->large, ptr);
     if (page) {
         block = find_block_for_ptr(page, ptr);
-        if (block && !block->is_free) {
+        if (block) {
+            if (block->is_free) {
+                // This shouldn't happen for large blocks since they get unmapped
+                ft_printf("*** Error: double free or corruption (large): %p ***\n", ptr);
+                abort();
+            }
             // For large blocks, we immediately unmap the entire page
             if (page->prev) {
                 page->prev->next = page->next;
@@ -126,9 +152,14 @@ void free(void *ptr) {
             }
             munmap(page, page->size);
             return;
+        } else {
+            // Pointer is within page range but not a valid block start
+            ft_printf("*** Error: free(): invalid pointer %p (corrupted large zone) ***\n", ptr);
+            abort();
         }
     }
     
-    // If we reach here, it's either a double free or invalid pointer
-    // For now, we silently ignore it (could also abort)
+    // Invalid pointer - abort like real free()
+    ft_printf("*** Error: free(): invalid pointer %p ***\n", ptr);
+    abort();
 }

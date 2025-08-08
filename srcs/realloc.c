@@ -68,6 +68,7 @@ static size_t get_block_size(void *ptr) {
 }
 
 void *realloc(void *ptr, size_t size) {
+    write(1, "=== REALLOC FUNCTION ===\n", 25);
     // If ptr is NULL, behave like malloc
     if (!ptr) {
         return malloc(size);

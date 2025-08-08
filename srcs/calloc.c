@@ -2,6 +2,7 @@
 #include "utils.h"
 
 void *calloc(size_t count, size_t size) {
+    // write(1, "=== CALLOC FUNCTION ===\n", 24);
     // Check for overflow
     if (count != 0 && size > SIZE_MAX / count) {
         return NULL;

@@ -1,5 +1,4 @@
 #include "malloc.h"
-#include "printf.h"
 
 static t_memory_zones g_memory_zones_struct = {NULL, NULL, NULL};
 t_memory_zones *g_memory_zones = &g_memory_zones_struct;
@@ -144,6 +143,7 @@ static void *allocate_large_block(size_t size) {
 }
 
 void *malloc(size_t size) {
+    // write(1, "=== MALLOC FUNCTION ===\n", 24);
     if (size == 0) {
         return NULL;
     }
