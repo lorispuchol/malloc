@@ -55,6 +55,17 @@ static void coalesce_free_blocks(t_block_header *block) {
     }
 }
 
+// Helper function to count pages in a zone
+static int count_pages_in_zone(t_page_header *zone_head) {
+    int count = 0;
+    t_page_header *page = zone_head;
+    while (page) {
+        count++;
+        page = page->next;
+    }
+    return count;
+}
+
 // Helper function to remove empty pages from tiny/small zones
 static void cleanup_empty_page(t_page_header **zone_head, t_page_header *page) {
     // Only cleanup tiny/small zones, not large zones
@@ -67,6 +78,16 @@ static void cleanup_empty_page(t_page_header **zone_head, t_page_header *page) {
     if (block && block->is_free && !block->next && 
         block->size >= page->size - sizeof(t_page_header) - sizeof(t_block_header)) {
         
+        // Count total pages in this zone
+        int total_pages = count_pages_in_zone(*zone_head);
+        
+        // Keep at least one page in TINY/SMALL zones to avoid expensive mmap/munmap cycles
+        if (total_pages <= 1) {
+            // Don't cleanup the last page - keep it for future allocations
+            return;
+        }
+        
+        // Safe to cleanup this empty page since we have others
         // Remove page from linked list
         if (page->prev) {
             page->prev->next = page->next;
